@@ -21,13 +21,23 @@ namespace MyTestApp.Controllers
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 TemperatureC = Random.Shared.Next(-20, 55),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            });
+
+            string docPath =
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            using (StreamWriter outputFile = new StreamWriter(Path.Combine(docPath, "WriteLines.txt")))
+            {
+                foreach (WeatherForecast line in result)
+                    outputFile.WriteLine(line.Summary);
+            }
+
+            return result;
         }
     }
 }
